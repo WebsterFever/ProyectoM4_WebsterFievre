@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { registerUser } from "../services/authService";
 
 function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -12,12 +14,13 @@ function RegisterPage() {
 
     try {
       await registerUser(email, password);
+      navigate("/login");
     } catch (err) {
       setError("No se pudo crear la cuenta. Revisa tus datos.");
     }
   }
 
-   return (
+  return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <form
         onSubmit={handleSubmit}
@@ -51,10 +54,16 @@ function RegisterPage() {
         >
           Registrarse
         </button>
+
+        <p className="text-sm text-center text-gray-600">
+          ¿Ya tienes cuenta?{" "}
+          <Link to="/login" className="text-blue-600 hover:underline">
+            Inicia sesión
+          </Link>
+        </p>
       </form>
     </div>
   );
-
 }
 
 export default RegisterPage;

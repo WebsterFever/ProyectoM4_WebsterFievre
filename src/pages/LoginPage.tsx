@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { loginUser } from "../services/authService";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -12,6 +14,7 @@ function LoginPage() {
 
     try {
       await loginUser(email, password);
+      navigate("/dashboard");
     } catch (err) {
       setError("Correo o contraseña incorrectos.");
     }
@@ -51,6 +54,13 @@ function LoginPage() {
         >
           Entrar
         </button>
+
+        <p className="text-sm text-center text-gray-600">
+          ¿No tienes cuenta?{" "}
+          <Link to="/register" className="text-blue-600 hover:underline">
+            Regístrate
+          </Link>
+        </p>
       </form>
     </div>
   );
