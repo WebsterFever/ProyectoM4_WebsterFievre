@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { logoutUser } from "../services/authService";
-import { getTasks, createTask } from "../services/taskService";
+import { getTasks, createTask, toggleTaskCompleted } from "../services/taskService";
 import type { Task } from "../types/Task";
 
 function DashboardPage() {
@@ -20,15 +20,24 @@ function DashboardPage() {
     loadTasks();
   }, [currentUser]);
 
+  async function refreshTasks() {
+    if (!currentUser) return;
+    const data = await getTasks(currentUser.uid);
+    setTasks(data);
+  }
+
   async function handleCreateTask(e: React.FormEvent) {
     e.preventDefault();
     if (!currentUser || newTitle.trim() === "") return;
 
     await createTask(currentUser.uid, newTitle.trim());
     setNewTitle("");
+    await refreshTasks();
+  }
 
-    const data = await getTasks(currentUser.uid);
-    setTasks(data);
+  async function handleToggleCompleted(task: Task) {
+    await toggleTaskCompleted(task.id, !task.completed);
+    await refreshTasks();
   }
 
   return (
@@ -72,9 +81,16 @@ function DashboardPage() {
           {tasks.map((task) => (
             <li
               key={task.id}
-              className="border border-gray-200 rounded-md px-3 py-2"
+              className="flex items-center gap-2 border border-gray-200 rounded-md px-3 py-2"
             >
-              {task.title}
+              <input
+                type="checkbox"
+                checked={task.completed}
+                onChange={() => handleToggleCompleted(task)}
+              />
+              <span className={task.completed ? "line-through text-gray-400" : ""}>
+                {task.title}
+              </span>
             </li>
           ))}
         </ul>
