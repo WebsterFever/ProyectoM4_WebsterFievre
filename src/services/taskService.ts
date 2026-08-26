@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { db } from "./firebase";
 import type { Task } from "../types/Task";
 
@@ -44,3 +44,7 @@ export async function updateTaskTitle(taskId: string, title: string): Promise<vo
   });
 }
 
+export async function deleteTask(taskId: string): Promise<void> {
+  const taskRef = doc(db, "tasks", taskId);
+  await deleteDoc(taskRef);
+}

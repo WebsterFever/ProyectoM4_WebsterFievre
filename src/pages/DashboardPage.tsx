@@ -6,6 +6,7 @@ import {
   createTask,
   toggleTaskCompleted,
   updateTaskTitle,
+  deleteTask,
 } from "../services/taskService";
 import type { Task } from "../types/Task";
 
@@ -62,6 +63,14 @@ function DashboardPage() {
     await updateTaskTitle(taskId, editingTitle.trim());
     setEditingTaskId(null);
     setEditingTitle("");
+    await refreshTasks();
+  }
+
+  async function handleDeleteTask(taskId: string) {
+    const confirmed = window.confirm("¿Seguro que quieres eliminar esta tarea?");
+    if (!confirmed) return;
+
+    await deleteTask(taskId);
     await refreshTasks();
   }
 
@@ -150,6 +159,12 @@ function DashboardPage() {
                     className="text-blue-600 text-sm"
                   >
                     Editar
+                  </button>
+                  <button
+                    onClick={() => handleDeleteTask(task.id)}
+                    className="text-red-600 text-sm"
+                  >
+                    Eliminar
                   </button>
                 </>
               )}
