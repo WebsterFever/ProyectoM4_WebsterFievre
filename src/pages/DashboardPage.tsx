@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { logoutUser } from "../services/authService";
-import { getTasks, createTask, toggleTaskCompleted } from "../services/taskService";
+import {
+  getTasks,
+  createTask,
+  toggleTaskCompleted,
+  updateTaskTitle,
+} from "../services/taskService";
 import type { Task } from "../types/Task";
 
 function DashboardPage() {
@@ -9,6 +14,8 @@ function DashboardPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loadingTasks, setLoadingTasks] = useState(true);
   const [newTitle, setNewTitle] = useState("");
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState("");
 
   useEffect(() => {
     async function loadTasks() {
@@ -37,6 +44,24 @@ function DashboardPage() {
 
   async function handleToggleCompleted(task: Task) {
     await toggleTaskCompleted(task.id, !task.completed);
+    await refreshTasks();
+  }
+
+  function startEditing(task: Task) {
+    setEditingTaskId(task.id);
+    setEditingTitle(task.title);
+  }
+
+  function cancelEditing() {
+    setEditingTaskId(null);
+    setEditingTitle("");
+  }
+
+  async function saveEditing(taskId: string) {
+    if (editingTitle.trim() === "") return;
+    await updateTaskTitle(taskId, editingTitle.trim());
+    setEditingTaskId(null);
+    setEditingTitle("");
     await refreshTasks();
   }
 
@@ -88,9 +113,46 @@ function DashboardPage() {
                 checked={task.completed}
                 onChange={() => handleToggleCompleted(task)}
               />
-              <span className={task.completed ? "line-through text-gray-400" : ""}>
-                {task.title}
-              </span>
+
+              {editingTaskId === task.id ? (
+                <>
+                  <input
+                    type="text"
+                    value={editingTitle}
+                    onChange={(e) => setEditingTitle(e.target.value)}
+                    className="flex-1 border border-gray-300 rounded-md px-2 py-1"
+                  />
+                  <button
+                    onClick={() => saveEditing(task.id)}
+                    className="text-green-600 text-sm font-medium"
+                  >
+                    Guardar
+                  </button>
+                  <button
+                    onClick={cancelEditing}
+                    className="text-gray-500 text-sm"
+                  >
+                    Cancelar
+                  </button>
+                </>
+              ) : (
+                <>
+                  <span
+                    className={
+                      "flex-1 " +
+                      (task.completed ? "line-through text-gray-400" : "")
+                    }
+                  >
+                    {task.title}
+                  </span>
+                  <button
+                    onClick={() => startEditing(task)}
+                    className="text-blue-600 text-sm"
+                  >
+                    Editar
+                  </button>
+                </>
+              )}
             </li>
           ))}
         </ul>

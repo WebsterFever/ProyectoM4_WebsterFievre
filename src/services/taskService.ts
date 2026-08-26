@@ -34,3 +34,13 @@ export async function toggleTaskCompleted(taskId: string, completed: boolean): P
     updatedAt: Date.now(),
   });
 }
+
+export async function updateTaskTitle(taskId: string, title: string): Promise<void> {
+  const taskRef = doc(db, "tasks", taskId);
+
+  await updateDoc(taskRef, {
+    title,
+    updatedAt: Date.now(),
+  });
+}
+
