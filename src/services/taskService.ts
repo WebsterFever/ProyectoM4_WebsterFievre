@@ -1,4 +1,5 @@
-import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, updateDoc, where } from "firebase/firestore";
+
 import { db } from "./firebase";
 import type { Task } from "../types/Task";
 
@@ -47,4 +48,23 @@ export async function updateTaskTitle(taskId: string, title: string): Promise<vo
 export async function deleteTask(taskId: string): Promise<void> {
   const taskRef = doc(db, "tasks", taskId);
   await deleteDoc(taskRef);
+}
+
+export function subscribeToTasks(
+  userId: string,
+  callback: (tasks: Task[]) => void
+): () => void {
+  const tasksRef = collection(db, "tasks");
+  const q = query(tasksRef, where("userId", "==", userId));
+
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    const tasks = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Task[];
+
+    callback(tasks);
+  });
+
+  return unsubscribe;
 }

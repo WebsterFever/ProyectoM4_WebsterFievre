@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { logoutUser } from "../services/authService";
 import {
-  getTasks,
   createTask,
   toggleTaskCompleted,
   updateTaskTitle,
   deleteTask,
+  subscribeToTasks,
 } from "../services/taskService";
 import type { Task } from "../types/Task";
 
@@ -19,20 +19,15 @@ function DashboardPage() {
   const [editingTitle, setEditingTitle] = useState("");
 
   useEffect(() => {
-    async function loadTasks() {
-      if (!currentUser) return;
-      const data = await getTasks(currentUser.uid);
+    if (!currentUser) return;
+
+    const unsubscribe = subscribeToTasks(currentUser.uid, (data) => {
       setTasks(data);
       setLoadingTasks(false);
-    }
-    loadTasks();
-  }, [currentUser]);
+    });
 
-  async function refreshTasks() {
-    if (!currentUser) return;
-    const data = await getTasks(currentUser.uid);
-    setTasks(data);
-  }
+    return () => unsubscribe();
+  }, [currentUser]);
 
   async function handleCreateTask(e: React.FormEvent) {
     e.preventDefault();
@@ -40,12 +35,10 @@ function DashboardPage() {
 
     await createTask(currentUser.uid, newTitle.trim());
     setNewTitle("");
-    await refreshTasks();
   }
 
   async function handleToggleCompleted(task: Task) {
     await toggleTaskCompleted(task.id, !task.completed);
-    await refreshTasks();
   }
 
   function startEditing(task: Task) {
@@ -63,7 +56,6 @@ function DashboardPage() {
     await updateTaskTitle(taskId, editingTitle.trim());
     setEditingTaskId(null);
     setEditingTitle("");
-    await refreshTasks();
   }
 
   async function handleDeleteTask(taskId: string) {
@@ -71,7 +63,6 @@ function DashboardPage() {
     if (!confirmed) return;
 
     await deleteTask(taskId);
-    await refreshTasks();
   }
 
   return (
