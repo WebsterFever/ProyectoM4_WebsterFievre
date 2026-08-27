@@ -8,6 +8,7 @@ import {
   deleteTask,
   subscribeToTasks,
 } from "../services/taskService";
+import { sendEmail } from "../services/emailService";
 import type { Task } from "../types/Task";
 
 function DashboardPage() {
@@ -17,6 +18,7 @@ function DashboardPage() {
   const [newTitle, setNewTitle] = useState("");
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState("");
+  const [emailStatus, setEmailStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
 
   useEffect(() => {
     if (!currentUser) return;
@@ -65,6 +67,27 @@ function DashboardPage() {
     await deleteTask(taskId);
   }
 
+  async function handleSendSummary() {
+    if (!currentUser?.email) return;
+
+    setEmailStatus("sending");
+
+    const summary = tasks
+      .map((t) => `- [${t.completed ? "x" : " "}] ${t.title}`)
+      .join("\n");
+
+    try {
+      await sendEmail({
+        to: currentUser.email,
+        subject: "Resumen de tus tareas",
+        message: `Aquí está el resumen de tus tareas:\n\n${summary || "No tienes tareas todavía."}`,
+      });
+      setEmailStatus("success");
+    } catch (error) {
+      setEmailStatus("error");
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6 flex flex-col gap-4">
@@ -79,6 +102,22 @@ function DashboardPage() {
         </div>
 
         <h1 className="text-xl font-semibold text-gray-800">Mis tareas</h1>
+
+        <div className="flex flex-col gap-1">
+          <button
+            onClick={handleSendSummary}
+            disabled={emailStatus === "sending"}
+            className="bg-purple-600 text-white px-4 py-2 rounded-md text-sm hover:bg-purple-700 disabled:opacity-50"
+          >
+            {emailStatus === "sending" ? "Enviando..." : "Enviar resumen por correo"}
+          </button>
+          {emailStatus === "success" && (
+            <p className="text-green-600 text-sm">Correo enviado correctamente.</p>
+          )}
+          {emailStatus === "error" && (
+            <p className="text-red-600 text-sm">No se pudo enviar el correo.</p>
+          )}
+        </div>
 
         <form onSubmit={handleCreateTask} className="flex gap-2">
           <input
