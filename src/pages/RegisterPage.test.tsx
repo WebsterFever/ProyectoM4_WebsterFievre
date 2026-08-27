@@ -59,4 +59,25 @@ describe("RegisterPage", () => {
       expect(screen.getByText("Iniciar sesión")).toBeInTheDocument();
     });
   });
+
+  it("shows an error message when registration fails", async () => {
+    const { registerUser } = await import("../services/authService");
+    vi.mocked(registerUser).mockRejectedValueOnce(new Error("Email already in use"));
+
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter>
+        <RegisterPage />
+      </MemoryRouter>
+    );
+
+    await user.type(screen.getByPlaceholderText("Correo electrónico"), "test@example.com");
+    await user.type(screen.getByPlaceholderText("Contraseña"), "password123");
+    await user.click(screen.getByText("Registrarse"));
+
+    expect(
+      await screen.findByText("No se pudo crear la cuenta. Revisa tus datos.")
+    ).toBeInTheDocument();
+  });
 });
