@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { loginUser } from "../services/authService";
+import { loginUser, loginWithGoogle } from "../services/authService";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -17,6 +17,18 @@ function LoginPage() {
       navigate("/dashboard");
     } catch (err) {
       setError("Correo o contraseña incorrectos.");
+    }
+  }
+
+  async function handleGoogleLogin() {
+    setError("");
+
+    try {
+      await loginWithGoogle();
+      navigate("/dashboard");
+    } catch (err) {
+      console.error("GOOGLE LOGIN ERROR:", err);
+      setError("No se pudo iniciar sesión con Google.");
     }
   }
 
@@ -53,6 +65,14 @@ function LoginPage() {
           className="bg-blue-600 text-white rounded-md py-2 font-medium hover:bg-blue-700 transition-colors"
         >
           Entrar
+        </button>
+
+        <button
+          type="button"
+          onClick={handleGoogleLogin}
+          className="border border-gray-300 bg-white text-gray-700 rounded-md py-2 font-medium hover:bg-gray-50 transition-colors"
+        >
+          Continuar con Google
         </button>
 
         <p className="text-sm text-center text-gray-600">
