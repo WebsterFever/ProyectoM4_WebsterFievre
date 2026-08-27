@@ -16,7 +16,13 @@ function RegisterPage() {
       await registerUser(email, password);
       navigate("/login");
     } catch (err) {
-      setError("No se pudo crear la cuenta. Revisa tus datos.");
+      console.error("REGISTER ERROR:", err);
+
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("No se pudo crear la cuenta.");
+      }
     }
   }
 
