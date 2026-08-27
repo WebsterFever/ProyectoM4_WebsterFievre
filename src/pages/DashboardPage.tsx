@@ -67,9 +67,7 @@ function DashboardPage() {
     await deleteTask(taskId);
   }
 
-  async function handleSendSummary() {
-    if (!currentUser?.email) return;
-
+   async function handleSendSummary() {
     setEmailStatus("sending");
 
     const summary = tasks
@@ -78,7 +76,7 @@ function DashboardPage() {
 
     try {
       await sendEmail({
-        to: currentUser.email,
+        to: "webster.fievre@al.infnet.edu.br",
         subject: "Resumen de tus tareas",
         message: `Aquí está el resumen de tus tareas:\n\n${summary || "No tienes tareas todavía."}`,
       });
