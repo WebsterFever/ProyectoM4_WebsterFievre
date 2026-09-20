@@ -17,10 +17,10 @@ describe("RegisterPage", () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText("Crear cuenta")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Correo electrónico")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Contraseña")).toBeInTheDocument();
-    expect(screen.getByText("Registrarse")).toBeInTheDocument();
+    expect(screen.getByText("Create account")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Email address")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Password")).toBeInTheDocument();
+    expect(screen.getByText("Sign up")).toBeInTheDocument();
   });
 
   it("updates the email input when the user types", async () => {
@@ -32,7 +32,7 @@ describe("RegisterPage", () => {
       </MemoryRouter>
     );
 
-    const emailInput = screen.getByPlaceholderText("Correo electrónico") as HTMLInputElement;
+    const emailInput = screen.getByPlaceholderText("Email address") as HTMLInputElement;
 
     await user.type(emailInput, "test@example.com");
 
@@ -51,12 +51,12 @@ describe("RegisterPage", () => {
       </MemoryRouter>
     );
 
-    await user.type(screen.getByPlaceholderText("Correo electrónico"), "test@example.com");
-    await user.type(screen.getByPlaceholderText("Contraseña"), "password123");
-    await user.click(screen.getByText("Registrarse"));
+    await user.type(screen.getByPlaceholderText("Email address"), "test@example.com");
+    await user.type(screen.getByPlaceholderText("Password"), "password123");
+    await user.click(screen.getByText("Sign up"));
 
     await waitFor(() => {
-      expect(screen.getByText("Iniciar sesión")).toBeInTheDocument();
+      expect(screen.getByText("Sign in")).toBeInTheDocument();
     });
   });
 
@@ -72,12 +72,12 @@ describe("RegisterPage", () => {
       </MemoryRouter>
     );
 
-    await user.type(screen.getByPlaceholderText("Correo electrónico"), "test@example.com");
-    await user.type(screen.getByPlaceholderText("Contraseña"), "password123");
-    await user.click(screen.getByText("Registrarse"));
+    await user.type(screen.getByPlaceholderText("Email address"), "test@example.com");
+    await user.type(screen.getByPlaceholderText("Password"), "password123");
+    await user.click(screen.getByText("Sign up"));
 
     expect(
-      await screen.findByText("No se pudo crear la cuenta. Revisa tus datos.")
+      await screen.findByText("Email already in use")
     ).toBeInTheDocument();
   });
 });
