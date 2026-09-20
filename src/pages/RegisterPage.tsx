@@ -21,7 +21,7 @@ function RegisterPage() {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("No se pudo crear la cuenta.");
+        setError("Could not create the account.");
       }
     }
   }
@@ -33,12 +33,12 @@ function RegisterPage() {
         className="bg-white shadow-md rounded-lg p-8 w-full max-w-sm flex flex-col gap-4"
       >
         <h1 className="text-2xl font-semibold text-center text-gray-800">
-          Crear cuenta
+          Create account
         </h1>
 
         <input
           type="email"
-          placeholder="Correo electrónico"
+          placeholder="Email address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -46,7 +46,7 @@ function RegisterPage() {
 
         <input
           type="password"
-          placeholder="Contraseña"
+          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -58,13 +58,13 @@ function RegisterPage() {
           type="submit"
           className="bg-blue-600 text-white rounded-md py-2 font-medium hover:bg-blue-700 transition-colors"
         >
-          Registrarse
+          Sign up
         </button>
 
         <p className="text-sm text-center text-gray-600">
-          ¿Ya tienes cuenta?{" "}
+          Already have an account?{" "}
           <Link to="/login" className="text-blue-600 hover:underline">
-            Inicia sesión
+            Sign in
           </Link>
         </p>
       </form>
