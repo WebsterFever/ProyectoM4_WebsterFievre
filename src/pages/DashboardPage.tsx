@@ -61,13 +61,13 @@ function DashboardPage() {
   }
 
   async function handleDeleteTask(taskId: string) {
-    const confirmed = window.confirm("¿Seguro que quieres eliminar esta tarea?");
+    const confirmed = window.confirm("Are you sure you want to delete this task?");
     if (!confirmed) return;
 
     await deleteTask(taskId);
   }
 
-   async function handleSendSummary() {
+  async function handleSendSummary() {
     setEmailStatus("sending");
 
     const summary = tasks
@@ -77,8 +77,8 @@ function DashboardPage() {
     try {
       await sendEmail({
         to: "webster.fievre@al.infnet.edu.br",
-        subject: "Resumen de tus tareas",
-        message: `Aquí está el resumen de tus tareas:\n\n${summary || "No tienes tareas todavía."}`,
+        subject: "Your task summary",
+        message: `Here is your task summary:\n\n${summary || "You do not have any tasks yet."}`,
       });
       setEmailStatus("success");
     } catch (error) {
@@ -95,11 +95,11 @@ function DashboardPage() {
             onClick={() => logoutUser()}
             className="bg-red-600 text-white px-3 py-1 rounded-md text-sm hover:bg-red-700"
           >
-            Cerrar sesión
+            Sign out
           </button>
         </div>
 
-        <h1 className="text-xl font-semibold text-gray-800">Mis tareas</h1>
+        <h1 className="text-xl font-semibold text-gray-800">My Tasks</h1>
 
         <div className="flex flex-col gap-1">
           <button
@@ -107,20 +107,20 @@ function DashboardPage() {
             disabled={emailStatus === "sending"}
             className="bg-purple-600 text-white px-4 py-2 rounded-md text-sm hover:bg-purple-700 disabled:opacity-50"
           >
-            {emailStatus === "sending" ? "Enviando..." : "Enviar resumen por correo"}
+            {emailStatus === "sending" ? "Sending..." : "Send summary by email"}
           </button>
           {emailStatus === "success" && (
-            <p className="text-green-600 text-sm">Correo enviado correctamente.</p>
+            <p className="text-green-600 text-sm">Email sent successfully.</p>
           )}
           {emailStatus === "error" && (
-            <p className="text-red-600 text-sm">No se pudo enviar el correo.</p>
+            <p className="text-red-600 text-sm">The email could not be sent.</p>
           )}
         </div>
 
         <form onSubmit={handleCreateTask} className="flex gap-2">
           <input
             type="text"
-            placeholder="Nueva tarea"
+            placeholder="New task"
             value={newTitle}
             onChange={(e) => setNewTitle(e.target.value)}
             className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -129,14 +129,14 @@ function DashboardPage() {
             type="submit"
             className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
           >
-            Agregar
+            Add
           </button>
         </form>
 
-        {loadingTasks && <p className="text-gray-500">Cargando tareas...</p>}
+        {loadingTasks && <p className="text-gray-500">Loading tasks...</p>}
 
         {!loadingTasks && tasks.length === 0 && (
-          <p className="text-gray-500">Todavía no tienes tareas.</p>
+          <p className="text-gray-500">You do not have any tasks yet.</p>
         )}
 
         <ul className="flex flex-col gap-2">
@@ -163,13 +163,13 @@ function DashboardPage() {
                     onClick={() => saveEditing(task.id)}
                     className="text-green-600 text-sm font-medium"
                   >
-                    Guardar
+                    Save
                   </button>
                   <button
                     onClick={cancelEditing}
                     className="text-gray-500 text-sm"
                   >
-                    Cancelar
+                    Cancel
                   </button>
                 </>
               ) : (
@@ -186,13 +186,13 @@ function DashboardPage() {
                     onClick={() => startEditing(task)}
                     className="text-blue-600 text-sm"
                   >
-                    Editar
+                    Edit
                   </button>
                   <button
                     onClick={() => handleDeleteTask(task.id)}
                     className="text-red-600 text-sm"
                   >
-                    Eliminar
+                    Delete
                   </button>
                 </>
               )}
