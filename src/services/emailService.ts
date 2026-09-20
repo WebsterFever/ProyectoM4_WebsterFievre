@@ -12,6 +12,6 @@ export async function sendEmail({ to, subject, message }: SendEmailParams): Prom
   });
 
   if (!response.ok) {
-    throw new Error("No se pudo enviar el correo");
+    throw new Error("The email could not be sent");
   }
 }
