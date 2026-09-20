@@ -1,82 +1,82 @@
-# Gestor Estratégico de Tareas
+# Strategic Task Manager
 
-Aplicación web para gestionar tareas personales, con autenticación de usuarios, persistencia en tiempo real y notificaciones por correo electrónico. Cada usuario solo puede ver y modificar sus propias tareas.
+A web application for managing personal tasks with user authentication, real-time persistence, and email notifications. Each user can only view and modify their own tasks.
 
-**Demo en producción:** https://proyecto-m4-webster-fievre-3i38.vercel.app/
-**Repositorio:** https://github.com/WebsterFever/ProyectoM4_WebsterFievre
+**Production demo:** https://proyecto-m4-webster-fievre-3i38.vercel.app/
+**Repository:** https://github.com/WebsterFever/ProyectoM4_WebsterFievre
 
 ---
 
-## Capturas de la aplicación
+## Application Screenshots
 
-| Registro | Login |
+| Registration | Login |
 |---|---|
-| ![Registro](./docs/screenshots/register.png) | ![Login](./docs/screenshots/login.png) |
+| ![Registration](./docs/screenshots/register.png) | ![Login](./docs/screenshots/login.png) |
 
-| Dashboard con tareas | Resumen enviado por correo |
+| Task Dashboard | Summary Sent by Email |
 |---|---|
-| ![Dashboard](./docs/screenshots/dashboard.png) | ![Correo enviado](./docs/screenshots/dashboard-email-sent.png) |
+| ![Dashboard](./docs/screenshots/dashboard.png) | ![Email sent](./docs/screenshots/dashboard-email-sent.png) |
 
-| Correo recibido |
+| Received Email |
 |---|
-| ![Email recibido](./docs/screenshots/email-received.png) |
+| ![Received email](./docs/screenshots/email-received.png) |
 
-> Las imágenes de esta sección deben guardarse en `docs/screenshots/` con los nombres indicados arriba (`register.png`, `login.png`, `dashboard.png`, `dashboard-email-sent.png`, `email-received.png`).
+> The images in this section should be stored in `docs/screenshots/` using the filenames shown above (`register.png`, `login.png`, `dashboard.png`, `dashboard-email-sent.png`, `email-received.png`).
 
 ---
 
-## Descripción del proyecto
+## Project Description
 
-El Gestor Estratégico de Tareas permite a un usuario registrarse, iniciar sesión y administrar una lista personal de tareas (crear, completar, editar, eliminar), sincronizada en tiempo real. Además, el usuario puede solicitar el envío de un resumen de sus tareas por correo electrónico, procesado de forma segura a través de una función serverless propia.
+The Strategic Task Manager allows a user to register, sign in, and manage a personal task list (create, complete, edit, and delete) synchronized in real time. The user can also request an email summary of their tasks, securely processed through a custom serverless function.
 
-## Tecnologías utilizadas
+## Technologies Used
 
-- **React 19 + TypeScript** — interfaz de usuario
-- **Vite** — herramienta de build y servidor de desarrollo
-- **Tailwind CSS v4** — estilos
-- **React Router v7** — rutas y navegación del lado del cliente
-- **Firebase Authentication** — registro, login, sesión de usuarios
-- **Cloud Firestore** — base de datos de tareas, con Security Rules
-- **Vercel** — hosting y funciones serverless
-- **AWS SES** (vía Vercel Function) — envío de correos electrónicos
+- **React 19 + TypeScript** — user interface
+- **Vite** — build tool and development server
+- **Tailwind CSS v4** — styling
+- **React Router v7** — client-side routing and navigation
+- **Firebase Authentication** — user registration, login, and session management
+- **Cloud Firestore** — task database with Security Rules
+- **Vercel** — hosting and serverless functions
+- **AWS SES** (vía Vercel Function) — email delivery
 - **Vitest + React Testing Library** — testing
 
-## Arquitectura
+## Architecture
 
 ```text
 project-root/
 ├── src/
-│   ├── pages/          # Pantallas completas (Register, Login, Dashboard)
-│   ├── components/      # Piezas reutilizables (ProtectedRoute)
-│   ├── context/          # AuthContext (estado global de sesión)
-│   ├── services/         # Lógica de datos: Firebase, Firestore, email
-│   ├── types/             # Interfaces de TypeScript (Task)
-│   └── test/               # Configuración de testing
+│   ├── pages/          # Full pages (Register, Login, Dashboard)
+│   ├── components/      # Reusable components (ProtectedRoute)
+│   ├── context/          # AuthContext (global session state)
+│   ├── services/         # Data logic: Firebase, Firestore, email
+│   ├── types/             # TypeScript interfaces (Task)
+│   └── test/               # Test configuration
 ├── api/
-│   └── send-email.ts    # Función serverless (Vercel), llama a AWS SES
-├── firestore.rules        # Reglas de seguridad de Firestore
-├── vercel.json             # Configuración de rutas SPA en Vercel
+│   └── send-email.ts    # Serverless function (Vercel), calls AWS SES
+├── firestore.rules        # Firestore security rules
+├── vercel.json             # SPA route configuration in Vercel
 ├── .env / .env.example
 └── README.md
 ```
 
-### Recorrido de los datos
+### Data Flow
 
-**Autenticación y tareas:**
+**Authentication and tasks:**
 ```text
-Usuario → React → Firebase Authentication → Firestore
-                                              (protegido por Security Rules
-                                               basadas en el UID del usuario)
+User → React → Firebase Authentication → Firestore
+                                              (protected by Security Rules
+                                               based on the user's UID)
 ```
 
-**Envío de email:**
+**Email delivery:**
 ```text
-Usuario → React → Vercel Function (/api/send-email) → AWS SES → Email
+User → React → Vercel Function (/api/send-email) → AWS SES → Email
 ```
 
-React **nunca** llama directamente a AWS SES. Las credenciales de AWS (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`) solo existen como variables de entorno del servidor, en la función serverless — nunca se envían al navegador. Esto evita que cualquier persona pueda extraerlas inspeccionando el código del cliente.
+React **never** calls AWS SES directly. AWS credentials (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`) exist only as server-side environment variables in the serverless function and are never sent to the browser. This prevents users from extracting them by inspecting client-side code.
 
-## Instalación
+## Installation
 
 ```bash
 git clone https://github.com/WebsterFever/ProyectoM4_WebsterFievre.git
@@ -84,12 +84,12 @@ cd ProyectoM4_WebsterFievre
 npm install
 ```
 
-## Variables de entorno
+## Environment Variables
 
-Copia `.env.example` a `.env` y completa los valores reales:
+Copy `.env.example` to `.env` and fill in the real values:
 
 ```env
-# Firebase (públicas, se exponen al navegador — protegidas por Security Rules, no por ocultarlas)
+# Firebase (public, exposed to the browser — protected by Security Rules, not by hiding them)
 VITE_FIREBASE_API_KEY=
 VITE_FIREBASE_AUTH_DOMAIN=
 VITE_FIREBASE_PROJECT_ID=
@@ -97,38 +97,38 @@ VITE_FIREBASE_STORAGE_BUCKET=
 VITE_FIREBASE_MESSAGING_SENDER_ID=
 VITE_FIREBASE_APP_ID=
 
-# AWS SES (privadas — solo usadas por la función serverless, nunca por el frontend)
+# AWS SES (private — used only by the serverless function, never by the frontend)
 AWS_ACCESS_KEY_ID=
 AWS_SECRET_ACCESS_KEY=
 AWS_REGION=
 SES_FROM_EMAIL=
 ```
 
-Las variables con prefijo `VITE_` son incluidas por Vite en el bundle del navegador; las demás solo existen en el entorno de ejecución de la función serverless.
+Variables with the `VITE_` prefix are included by Vite in the browser bundle; the others exist only in the serverless function runtime.
 
-Para correr el proyecto localmente, incluyendo la función serverless:
+To run the project locally, including the serverless function:
 
 ```bash
-npm run dev        # solo frontend (Vite)
-vercel dev          # frontend + función serverless (/api/send-email)
+npm run dev        # frontend only (Vite)
+vercel dev          # frontend + serverless function (/api/send-email)
 ```
 
 ## Firebase
 
-El proyecto usa dos productos de Firebase:
+The project uses two Firebase products:
 
-- **Authentication**, con el proveedor de **email/contraseña** (sin login social ni MFA, fuera del alcance del proyecto).
-- **Cloud Firestore**, como base de datos de tareas.
+- **Authentication**, with the **email/password** provider (no social login or MFA, which are outside the scope of the project).
+- **Cloud Firestore**, as the task database.
 
-### Flujo de autenticación
+### Authentication Flow
 
-1. `registerUser` / `loginUser` (`src/services/authService.ts`) llaman al SDK de Firebase Auth.
-2. `AuthContext` (`src/context/AuthContext.tsx`) se suscribe a `onAuthStateChanged`, manteniendo un estado global `{ currentUser, loading }`, accesible desde cualquier componente vía el hook `useAuth()`.
-3. `ProtectedRoute` (`src/components/ProtectedRoute.tsx`) usa ese estado para redirigir a `/login` si no hay sesión activa, mostrando un estado de carga mientras Firebase confirma la sesión (evitando expulsar por error a un usuario con conexión lenta).
+1. `registerUser` / `loginUser` (`src/services/authService.ts`) call the Firebase Auth SDK.
+2. `AuthContext` (`src/context/AuthContext.tsx`) subscribes to `onAuthStateChanged`, maintaining a global state `{ currentUser, loading }`, accessible from any component through the `useAuth()`.
+3. `ProtectedRoute` (`src/components/ProtectedRoute.tsx`) uses that state to redirect to `/login` when there is no active session, while showing a loading state until Firebase confirms the session (preventing users with slow connections from being redirected incorrectly).
 
-## Firestore — modelo de datos y Security Rules
+## Firestore — Data Model and Security Rules
 
-### Modelo `Task`
+### `Task` Model
 
 ```ts
 interface Task {
@@ -152,30 +152,30 @@ match /tasks/{taskId} {
 }
 ```
 
-Estas reglas garantizan que un usuario **nunca** pueda leer, editar o eliminar tareas de otro usuario, sin importar lo que haga el frontend. Se verificaron manualmente con el Rules Playground de Firebase, simulando lecturas cruzadas entre dos usuarios distintos (ver sección "Uso de IA" más abajo).
+These rules ensure that a user can **never** read, edit, or delete another user's tasks, regardless of what the frontend does. They were manually verified with Firebase's Rules Playground by simulating cross-user reads between two different users (see the "Use of AI" section below).
 
-## Flujo de tareas (CRUD)
+## Task Flow (CRUD)
 
-Toda la lógica de datos vive en `src/services/taskService.ts`, separada de la UI (`src/pages/DashboardPage.tsx`):
+All data logic lives in `src/services/taskService.ts`, separated from the UI (`src/pages/DashboardPage.tsx`):
 
-1. **Listar** — sincronización en tiempo real con `onSnapshot` (no `getDocs`): cualquier cambio en Firestore se refleja automáticamente en la UI, sin recargar. La suscripción se cancela en la limpieza de `useEffect` para evitar memory leaks.
-2. **Crear** — `createTask`, vía `addDoc`.
-3. **Completar** — `toggleTaskCompleted`, vía `updateDoc`.
-4. **Editar** — `updateTaskTitle`, edición inline en la lista.
-5. **Eliminar** — `deleteTask`, vía `deleteDoc`, con confirmación (`window.confirm`).
+1. **List** — real-time synchronization with `onSnapshot` (no `getDocs`): any change in Firestore is automatically reflected in the UI without refreshing. The subscription is cancelled in the `useEffect` cleanup to prevent memory leaks.
+2. **Create** — `createTask`, vía `addDoc`.
+3. **Complete** — `toggleTaskCompleted`, vía `updateDoc`.
+4. **Edit** — `updateTaskTitle`, inline editing in the list.
+5. **Delete** — `deleteTask`, vía `deleteDoc`, with confirmation (`window.confirm`).
 
-## Flujo de AWS SES
+## AWS SES Flow
 
 ```text
 React (DashboardPage) → sendEmail() → fetch("/api/send-email")
    → api/send-email.ts (Vercel Function) → AWS SES → Email
 ```
 
-- El frontend solo conoce su propio endpoint `/api/send-email`, nunca AWS directamente.
-- La función serverless valida el método HTTP y los campos requeridos, usa el SDK `@aws-sdk/client-ses` con credenciales del entorno del servidor, y devuelve `200`/`400`/`500` según el resultado.
-- La UI maneja explícitamente los estados `idle | sending | success | error`.
+- The frontend only knows its own endpoint `/api/send-email`, never AWS directly.
+- The serverless function validates the HTTP method and required fields, uses the SDK `@aws-sdk/client-ses` with server-side environment credentials, and returns `200`/`400`/`500` depending on the result.
+- The UI explicitly handles the states `idle | sending | success | error`.
 
-**Limitación conocida (decisión documentada):** la cuenta de AWS SES está en **modo sandbox**, que solo permite enviar correos a direcciones verificadas. Para efectos de demostración, el resumen de tareas se envía siempre a una dirección fija verificada (`webster.fievre@al.infnet.edu.br`), independientemente del usuario logueado. En un entorno de producción real, se solicitaría "production access" a AWS para levantar esta restricción.
+**Known limitation (documented decision):** the AWS SES account is in **sandbox mode**, which only allows sending emails to verified addresses. For demonstration purposes, the task summary is always sent to a fixed verified address (`webster.fievre@al.infnet.edu.br`), regardless of the signed-in user. In a real production environment, AWS "production access" would be requested to remove this restriction.
 
 ## Testing
 
@@ -183,80 +183,80 @@ React (DashboardPage) → sendEmail() → fetch("/api/send-email")
 npm test
 ```
 
-Tests con **Vitest** + **React Testing Library**, sobre `RegisterPage` y `LoginPage`:
+Tests use **Vitest** + **React Testing Library**, for `RegisterPage` y `LoginPage`:
 
-- Renderizado correcto de los formularios.
-- Actualización de inputs controlados al escribir (interacción de usuario simulada con `@testing-library/user-event`).
-- Flujo exitoso: navegación a la siguiente ruta tras registro/login correcto.
-- Flujo de error: mensaje de error visible cuando Firebase rechaza la operación.
+- Correct rendering of the forms.
+- Controlled inputs update correctly when typing (user interaction simulated with `@testing-library/user-event`).
+- Success flow: navigation to the next route after successful registration/login.
+- Error flow: visible error message when Firebase rejects the operation.
 
-Firebase (`authService`) está **mockeado** con `vi.mock`, para que los tests no dependan de red ni generen usuarios reales — se prueba el comportamiento del componente, no el de Firebase.
+Firebase (`authService`) is **mocked** with `vi.mock`, so tests do not depend on the network or create real users — the component behavior is tested, not Firebase itself.
 
 ## Deploy
 
-Desplegado en **Vercel**, con despliegue automático en cada `git push` a `main`.
+Deployed on **Vercel**, with automatic deployment on every `git push` to `main`.
 
-- **Variables de entorno**: configuradas en el dashboard de Vercel (Settings → Environment Variables) para el ambiente de producción — nunca se suben vía Git.
-- **Rutas SPA**: `vercel.json` incluye una regla de *rewrite* que redirige cualquier ruta que no sea `/api/*` hacia `index.html`, para que React Router pueda manejar rutas como `/dashboard` correctamente al refrescar o entrar directo por URL.
+- **Environment variables**: configured in the Vercel dashboard (Settings → Environment Variables) for the production environment — never committed through Git.
+- **SPA routes**: `vercel.json` includes a rewrite rule that sends any route other than `/api/*` to `index.html`, allowing React Router to correctly handle routes such as `/dashboard` on refresh or direct URL access.
 
-## Decisiones técnicas
+## Technical Decisions
 
-- **Arquitectura de carpetas**: `services/` separa la lógica de datos (Firebase, Firestore, email) de la UI (`pages/`, `components/`), facilitando el testing y el mantenimiento.
-- **Context API** (`AuthContext`) en vez de prop drilling: la sesión del usuario se necesita en múltiples componentes no relacionados jerárquicamente (`ProtectedRoute`, `DashboardPage`); centralizarla evita múltiples suscripciones duplicadas a `onAuthStateChanged`.
-- **`onSnapshot` en vez de `getDocs`** para listar tareas: sincronización en tiempo real sin refrescos manuales tras cada operación.
-- **Modelo `Task` mínimo** (6 campos): campos como `priority` o `dueDate` se dejaron fuera del alcance obligatorio, reservados como posibles extras futuros.
-- **IAM de AWS con permisos mínimos**: el usuario `gestor-tareas-ses-sender` solo tiene la política `AmazonSESFullAccess`, no acceso administrativo completo a la cuenta de AWS (principio de menor privilegio).
-- **Email fijo en modo sandbox**: ver sección "Flujo de AWS SES".
+- **Folder architecture**: `services/` separates data logic (Firebase, Firestore, email) de la UI (`pages/`, `components/`), making testing and maintenance easier.
+- **Context API** (`AuthContext`) instead of prop drilling: the user session is needed across multiple components that are not directly related in the component hierarchy (`ProtectedRoute`, `DashboardPage`); centralizing it avoids multiple duplicate subscriptions a `onAuthStateChanged`.
+- **`onSnapshot` en vez de `getDocs`** for listing tasks: real-time synchronization without manual refreshes after each operation.
+- **Minimal `Task` model** (6 campos): fields such as `priority` or `dueDate` were kept outside the mandatory scope and reserved for possible future enhancements.
+- **AWS IAM with minimum permissions**: el usuario `gestor-tareas-ses-sender` only has the `AmazonSESFullAccess`, policy, not full administrative access to the AWS account (principle of least privilege).
+- **Fixed email in sandbox mode**: see the "AWS SES Flow" section.
 
-## Uso de inteligencia artificial
+## Use of Artificial Intelligence
 
-Este proyecto se desarrolló con acompañamiento de un asistente de IA (Claude), en modalidad de mentoría paso a paso: el asistente explicaba conceptos y proponía código, y cada cambio se implementó, probó y verificó manualmente antes de avanzar. A continuación, un registro de los prompts y decisiones más relevantes (no se documentan pasos triviales):
-
----
-
-**Prompt utilizado:** Guía paso a paso para inicializar un proyecto React + TypeScript con Vite, configurando Git y revisando `.gitignore` antes del primer commit.
-
-**Qué aprendí:** Diferencia entre repositorio remoto (GitHub) y local (`git init`); `git init/add/commit` son operaciones locales, solo `git push` requiere red; el `.gitignore` por defecto de Vite no protege archivos `.env`.
-
-**Decisión que tomé:** Agregar `.env` y `.env.local` al `.gitignore` desde el primer hito, antes de que existiera ningún archivo `.env` real, para evitar subir credenciales por accidente en commits futuros.
+This project was developed with the assistance of an AI assistant (Claude) in a step-by-step mentoring workflow: the assistant explained concepts and proposed code, and each change was implemented, tested, and manually verified before moving forward. Below is a record of the most relevant prompts and decisions (trivial steps are omitted):
 
 ---
 
-**Prompt utilizado:** Guía para activar Firebase Authentication con el proveedor email/contraseña, y explicación del patrón Observer detrás de `onAuthStateChanged`.
+**Prompt used:** Step-by-step guidance to initialize a React + TypeScript project with Vite, configure Git, and review `.gitignore` before the first commit.
 
-**Qué aprendí:** Firebase Authentication requiere activar explícitamente cada proveedor de login; el token de sesión se persiste en el navegador, por eso la sesión sobrevive a un refresh.
+**What I learned:** The difference between a remote repository (GitHub) and a local repository (`git init`); `git init/add/commit` are local operations, while only `git push` requires network access; Vite's default `.gitignore` does not protect `.env` files.
 
-**Decisión que tomé:** Usar únicamente el proveedor "Email/contraseña", sin login social ni MFA, para mantener el alcance del proyecto acotado a los requisitos definidos.
-
----
-
-**Prompt utilizado:** Diseño de Firestore Security Rules para que un usuario no pueda leer ni modificar tareas de otro, y verificación práctica antes de construir el CRUD.
-
-**Qué aprendí:** La diferencia entre `resource.data` (datos ya existentes) y `request.resource.data` (datos que se están escribiendo) en las reglas de Firestore; cómo usar el Rules Playground para simular peticiones con distintos UID sin necesitar código de la app.
-
-**Decisión que tomé:** Verificar explícitamente, con dos simulaciones cruzadas (Usuario A leyendo datos de Usuario B, y el propio dueño leyendo los suyos), que el aislamiento de datos funcionaba antes de avanzar al CRUD — no se avanzó hasta confirmar ambos casos.
+**Decision I made:** Add `.env` and `.env.local` to `.gitignore` from the first milestone, before any real `.env` file existed, to avoid accidentally committing credentials later.
 
 ---
 
-**Prompt utilizado:** Explicación de por qué React no debe llamar directamente a AWS SES, y diseño de la arquitectura React → Vercel Function → AWS SES.
+**Prompt used:** Guidance for enabling Firebase Authentication with the email/password provider, plus an explanation of the Observer pattern behind `onAuthStateChanged`.
 
-**Qué aprendí:** La diferencia entre variables de entorno públicas (`VITE_...`, incluidas en el bundle del navegador) y privadas (sin prefijo, solo disponibles en funciones serverless); el principio de menor privilegio aplicado a credenciales de AWS (IAM con permisos limitados a SES, no acceso total a la cuenta).
+**What I learned:** Firebase Authentication requiere activar explícitamente cada proveedor de login; el token de sesión se persiste en el navegador, por eso la sesión forvive a un refresh.
 
-**Decisión que tomé:** Restringir el usuario IAM de AWS a la política `AmazonSESFullAccess` únicamente, y mantener el envío de correos limitado a una dirección verificada mientras la cuenta de SES esté en modo sandbox, documentando esta limitación en vez de intentar levantarla fuera del alcance del proyecto.
-
----
-
-**Prompt utilizado:** Migración de la carga de tareas de `getDocs` (consulta única) a `onSnapshot` (sincronización en tiempo real), y explicación del riesgo de memory leaks si no se cancela la suscripción.
-
-**Qué aprendí:** La diferencia entre pedir datos una vez y suscribirse a cambios continuos; por qué la función de limpieza de `useEffect` es obligatoria para cancelar suscripciones activas cuando un componente se desmonta o sus dependencias cambian.
-
-**Decisión que tomé:** Eliminar todas las llamadas manuales de "refrescar datos" después de crear/editar/eliminar tareas, dejando que `onSnapshot` actualice la UI automáticamente — reduciendo código duplicado y la posibilidad de que la UI quede desincronizada de Firestore.
+**Decision I made:** Use only the "Email/password" provider, without social login or MFA, to keep the project scope aligned with the defined requirements.
 
 ---
 
-**Prompt utilizado:** Configuración de tests con Vitest + React Testing Library, incluyendo mockeo de llamadas a Firebase con `vi.mock`.
+**Prompt used:** Design Firestore Security Rules so a user cannot read or modify another user's tasks, and verify them before building the CRUD.
 
-**Qué aprendí:** Por qué no conviene que los tests llamen a servicios externos reales (lentitud, dependencia de red, efectos secundarios no deterministas como crear usuarios reales); cómo `vi.mock` reemplaza un módulo completo durante la ejecución de un test, y la diferencia entre `mockResolvedValue` (éxito) y `mockRejectedValueOnce` (error, para un solo caso).
+**What I learned:** The difference between `resource.data` (existing data) and `request.resource.data` (data being written) in Firestore rules; how to use the Rules Playground to simulate requests with different UIDs without needing application code.
 
-**Decisión que tomé:** Escribir al menos un test de caso de error por componente probado (no solo el camino feliz), verificando que los mensajes de error se muestran correctamente cuando Firebase rechaza una operación.
+**Decision I made:** Explicitly verify, with two cross-user simulations (User A reading User B's data, and the owner reading their own), that data isolation worked before moving on to the CRUD — development did not proceed until both cases were confirmed.
+
+---
+
+**Prompt used:** Explain why React should not call AWS SES directly, and design the React → Vercel Function → AWS SES architecture.
+
+**What I learned:** The difference between public environment variables (`VITE_...`, included in the browser bundle) and private ones (without a prefix, only available to serverless functions); and the principle of least privilege applied to AWS credentials (IAM permissions limited to SES instead of full account access).
+
+**Decision I made:** Restrict the AWS IAM user to the `AmazonSESFullAccess` policy only, and keep email delivery limited to a verified address while the SES account remains in sandbox mode, documenting the limitation instead of trying to remove it outside the project scope.
+
+---
+
+**Prompt used:** Migrate task loading from `getDocs` (one-time query) to `onSnapshot` (real-time synchronization), and explain the risk of memory leaks if the subscription is not cancelled.
+
+**What I learned:** The difference between requesting data once and subscribing to continuous changes; why the `useEffect` cleanup function is required to cancel active subscriptions when a component unmounts or its dependencies change.
+
+**Decision I made:** Remove all manual "refresh data" calls after creating/editing/deleting tasks, allowing `onSnapshot` to update the UI automatically — reducing duplicate code and the chance of the UI becoming out of sync with Firestore.
+
+---
+
+**Prompt used:** Configure tests with Vitest + React Testing Library, including mocked Firebase calls with `vi.mock`.
+
+**What I learned:** Why tests should not call real external services (slowness, network dependency, and non-deterministic side effects such as creating real users); how `vi.mock` replaces an entire module during a test; and the difference between `mockResolvedValue` (success) and `mockRejectedValueOnce` (error for a single case).
+
+**Decision I made:** Write at least one error-case test for each tested component (not only the happy path), verifying that error messages are displayed correctly when Firebase rejects an operation.
 
