@@ -20,10 +20,10 @@ describe("LoginPage", () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText("Iniciar sesión")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Correo electrónico")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Contraseña")).toBeInTheDocument();
-    expect(screen.getByText("Entrar")).toBeInTheDocument();
+    expect(screen.getByText("Sign in")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Email address")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Password")).toBeInTheDocument();
+    expect(screen.getByText("Sign in")).toBeInTheDocument();
   });
 
   it("updates the password input when the user types", async () => {
@@ -35,7 +35,7 @@ describe("LoginPage", () => {
       </MemoryRouter>
     );
 
-    const passwordInput = screen.getByPlaceholderText("Contraseña") as HTMLInputElement;
+    const passwordInput = screen.getByPlaceholderText("Password") as HTMLInputElement;
 
     await user.type(passwordInput, "mypassword");
 
@@ -54,9 +54,9 @@ describe("LoginPage", () => {
       </MemoryRouter>
     );
 
-    await user.type(screen.getByPlaceholderText("Correo electrónico"), "test@example.com");
-    await user.type(screen.getByPlaceholderText("Contraseña"), "password123");
-    await user.click(screen.getByText("Entrar"));
+    await user.type(screen.getByPlaceholderText("Email address"), "test@example.com");
+    await user.type(screen.getByPlaceholderText("Password"), "password123");
+    await user.click(screen.getByRole("button", { name: "Sign in" }));
 
     await waitFor(() => {
       expect(screen.getByText("Dashboard content")).toBeInTheDocument();
@@ -75,12 +75,12 @@ describe("LoginPage", () => {
       </MemoryRouter>
     );
 
-    await user.type(screen.getByPlaceholderText("Correo electrónico"), "test@example.com");
-    await user.type(screen.getByPlaceholderText("Contraseña"), "wrongpassword");
-    await user.click(screen.getByText("Entrar"));
+    await user.type(screen.getByPlaceholderText("Email address"), "test@example.com");
+    await user.type(screen.getByPlaceholderText("Password"), "wrongpassword");
+    await user.click(screen.getByRole("button", { name: "Sign in" }));
 
     expect(
-      await screen.findByText("Correo o contraseña incorrectos.")
+      await screen.findByText("Incorrect email or password.")
     ).toBeInTheDocument();
   });
 });
